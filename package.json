@@ -11,6 +11,10 @@
     "res.csv",
     "express"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brandonjpierce/express-json2csv"
+  },
   "files": [
     "README.md",
     "LICENSE",
