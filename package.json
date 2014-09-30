@@ -1,6 +1,6 @@
 {
   "name": "express-json2csv",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "Express middleware to convert JSON to a CSV file",
   "author": "Brandon Pierce <brandon@brandonjpierce.com> (http://brandonjpierce.com)",
   "license": "MIT",
