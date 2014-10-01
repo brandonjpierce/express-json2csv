@@ -2,24 +2,12 @@
   "name": "express-json2csv",
   "version": "0.2.0",
   "description": "Express middleware to convert JSON to a CSV file",
-  "author": "Brandon Pierce <brandon@brandonjpierce.com> (http://brandonjpierce.com)",
-  "license": "MIT",
-  "keywords": [
-    "csv",
-    "json",
-    "excel",
-    "res.csv",
-    "express"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/brandonjpierce/express-json2csv"
-  },
-  "scripts": {
-    "test": "mocha --bail --reporter spec test/"
-  },
   "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
   "dependencies": {
+    "arraystream": "^0.0.5",
     "lodash": "^2.4.1"
   },
   "devDependencies": {
@@ -27,5 +15,15 @@
     "mocha": "^1.21.4",
     "should": "^4.0.4",
     "supertest": "^0.14.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brandonjpierce/express-json2csv.git"
+  },
+  "author": "Brandon Pierce <brandon@brandonjpierce.com> (http://brandonjpierce.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brandonjpierce/express-json2csv/issues"
+  },
+  "homepage": "https://github.com/brandonjpierce/express-json2csv"
 }
