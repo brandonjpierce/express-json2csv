@@ -1,3 +1,4 @@
+var arraystream = require('arraystream');
 var _ = require('lodash');
 
 var DEFAULTS = {
@@ -9,7 +10,7 @@ var DEFAULTS = {
 function Json2Csv(app, fileName, data, options) {
   this.express = app;
   this.fileName = fileName;
-  this.jsonData = data;
+  this.dataStream = arraystream.create(data);
   this.settings = _.extend(DEFAULTS, options);
 
   this.init();
@@ -17,75 +18,62 @@ function Json2Csv(app, fileName, data, options) {
 
 
 Json2Csv.prototype.init = function() {
-  var body = this.render(this.jsonData);
-  this.setHeaders();
+  var _this = this;
 
-  return this.express.send(body);
+  _this.render(function(data) {
+    _this.setHeaders();
+
+    return _this.express.send(data);
+  });
 };
 
 Json2Csv.prototype.setHeaders = function() {
-  this.express.charset = this.charset || 'utf-8';
+  this.express.charset = 'utf-8';
   this.express.header('Content-Type', 'text/csv');
   this.express.header('Content-disposition', 'attachment; filename=' + this.fileName + '.csv');
 };
 
-Json2Csv.prototype.getColumns = function() {
-  // if columns are set in settings use those instead
-  if (this.settings.columns) {
-    return this.settings.columns;
-  }
-
+Json2Csv.prototype.render = function(cb) {
   var columns = [];
-  var excludes = this.settings.excludes;
-
-  for (var i = 0, len = this.jsonData.length; i != len; i++) {
-    var data = this.jsonData[i];
-
-    // we need to check if our object contains an excluded key
-    // if so we remove if from the object altogether
-    if (excludes) {
-      _(data).forEach(function(val, key) {
-        if (_.contains(excludes, key)) {
-          delete data[key];
-        };
-      });
-    }
-
-    columns = _.union(columns, _.keys(data));
-  }
-
-  return columns;
-};
-
-Json2Csv.prototype.render = function() {
   var rows = [];
-  var columns = this.getColumns();
-  var excludes = this.settings.excludes;
+  var settings = this.settings;
+  var excludes = settings.excludes;
 
-  if (this.settings.includeHeader) {
-    rows.push(columns);
-  }
-
-  for (var i = 0, len = this.jsonData.length; i != len; i++) {
+  this.dataStream.on('data', function(data) {
     var row = [];
 
-    _(this.jsonData[i]).forEach(function(value, key) {
-      if (!_.contains(excludes, key)) {
+    _(data).forEach(function(value, key) {
+      if (excludes) {
+        if (_.contains(excludes, key)) {
+          delete data[key];
+        } else {
+          row.push(value);
+        }
+      } else {
         row.push(value);
       }
     });
 
+    columns = _.union(columns, _.keys(data));
     rows.push(row);
-  }
+  });
 
-  if (this.settings.includeFooter) {
-    rows.push(columns);
-  }
+  this.dataStream.on('end', function() {
+    if (settings.includeHeader) {
+      rows.unshift(columns);
+    }
 
-  return JSON.stringify(rows)
-    .replace(/],\[/g, '\n')
-    .replace(/]]/g, '')
-    .replace(/\[\[/g, '');
+    if (settings.includeFooter) {
+      rows.push(columns);
+    }
+
+    var data = JSON.stringify(rows)
+      .replace(/],\[/g, '\n')
+      .replace(/]]/g, '')
+      .replace(/\[\[/g, '');
+
+    cb(data);
+  });
 };
 
 function expressMiddleware(fileName, data, options) {
