@@ -54,7 +54,10 @@ Json2Csv.prototype.render = function(cb) {
       }
     });
 
-    columns = _.union(columns, _.keys(data));
+    columns = settings.columns ?
+      settings.columns :
+      _.union(columns, _.keys(data));
+
     rows.push(row);
   });
 
