@@ -4,7 +4,8 @@ var _ = require('lodash');
 var DEFAULTS = {
   includeHeader: true,
   includeFooter: false,
-  columns: null
+  columns: null,
+  excludes: null
 };
 
 function Json2Csv(app, fileName, data, options) {
