@@ -3,14 +3,13 @@ var _ = require('lodash');
 
 var DEFAULTS = {
   includeHeader: true,
-  includeFooter: false,
-  columns: null,
-  excludes: null
+  includeFooter: false
 };
 
-function Json2Csv(app, fileName, data, options) {
+function Json2Csv(app, fileName, data, columns, options) {
   this.express = app;
   this.fileName = fileName;
+  this.columns = columns;
   this.dataStream = arraystream.create(data);
   this.settings = _.extend(DEFAULTS, options);
 
@@ -21,9 +20,8 @@ function Json2Csv(app, fileName, data, options) {
 Json2Csv.prototype.init = function() {
   var _this = this;
 
-  _this.render(function(data) {
+  this.render(function(data) {
     _this.setHeaders();
-
     return _this.express.send(data);
   });
 };
@@ -35,40 +33,39 @@ Json2Csv.prototype.setHeaders = function() {
 };
 
 Json2Csv.prototype.render = function(cb) {
-  var columns = [];
-  var rows = [];
+  var columns = this.columns;
   var settings = this.settings;
-  var excludes = settings.excludes;
+  var headers = _.pluck(columns, 'label');
+
+  var rows = [];
 
   this.dataStream.on('data', function(data) {
     var row = [];
 
     _(data).forEach(function(value, key) {
-      if (excludes) {
-        if (_.contains(excludes, key)) {
-          delete data[key];
-        } else {
-          row.push(value);
-        }
-      } else {
-        row.push(value);
-      }
-    });
+      var exposedValue = value;
 
-    columns = settings.columns ?
-      settings.columns :
-      _.union(columns, _.keys(data));
+      _(columns).forEach(function(column, index) {
+        if (column.prop == key) {
+          if (column.render) {
+            exposedValue = column.render(value, data);
+          }
+
+          row.push(exposedValue);
+        }
+      });
+    });
 
     rows.push(row);
   });
 
   this.dataStream.on('end', function() {
     if (settings.includeHeader) {
-      rows.unshift(columns);
+      rows.unshift(headers);
     }
 
     if (settings.includeFooter) {
-      rows.push(columns);
+      rows.push(headers);
     }
 
     var data = JSON.stringify(rows)
