@@ -47,7 +47,7 @@ Json2Csv.prototype.render = function(cb) {
       var rowValue = data[column.prop];
 
       if (column.render) {
-        rowValue = column.render(value, data);
+        rowValue = column.render(rowValue, data);
       }
 
       row.push(rowValue);
