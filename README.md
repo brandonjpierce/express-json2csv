@@ -1,6 +1,8 @@
 # express-json2csv
 
-# PLEASE NOTE THAT THIS IS A WORK IN PROGRESS MODULE. EXPECT SYNTAX CHANGES FREQUENTLY WHILE I WORK THROUGH EDGE CASES AND REAL WORLD USES
+## PLEASE NOTE THAT THIS IS A WORK IN PROGRESS MODULE. EXPECT SYNTAX CHANGES FREQUENTLY WHILE I WORK THROUGH EDGE CASES AND REAL WORLD USES.
+
+This is currently being tested in an application that has to create 500,000+ row csv files.
 
 ## Installation
 
@@ -23,8 +25,6 @@ app.use(json2csv);
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
-excludes | Array | null | An array of items you wish to exclude from the generated CSV.
-columns | Array | null | Specify the column headers you wish to include. Note: this is only useful if you know the exact order your data and want to modify the output of the column header / footer text.
 includeHeader | Boolean | true | Include header columns
 includeFooter | Boolean | false | Include footer columns
 
@@ -53,10 +53,23 @@ var data = [{
     status: 'Divorced'
 }];
 
+// define the order of the columns and their labels here
+var columns = [{
+  prop: 'name',
+  label: 'Name'
+}, {
+  prop: 'occupation',
+  label: 'Occupation'
+}, {
+  prop: 'age',
+  label: 'Age'
+}, {
+  prop: 'status',
+  label: 'Current Status'
+}]
+
 app.get('/', function(req, res) {
-  res.csv('filename', data, {
-    excludes: ['_id'] // we do not want to include the _id field in our CSV
-  });
+  res.csv('filename', data, columns);
 });
 ```
 

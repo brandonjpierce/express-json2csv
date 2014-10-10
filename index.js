@@ -35,6 +35,7 @@ Json2Csv.prototype.setHeaders = function() {
 Json2Csv.prototype.render = function(cb) {
   var columns = this.columns;
   var settings = this.settings;
+  var props = _.pluck(columns, 'prop');
   var headers = _.pluck(columns, 'label');
 
   var rows = [];
@@ -42,18 +43,14 @@ Json2Csv.prototype.render = function(cb) {
   this.dataStream.on('data', function(data) {
     var row = [];
 
-    _(data).forEach(function(value, key) {
-      var exposedValue = value;
+    _(columns).forEach(function(column, index) {
+      var rowValue = data[column.prop];
 
-      _(columns).forEach(function(column, index) {
-        if (column.prop == key) {
-          if (column.render) {
-            exposedValue = column.render(value, data);
-          }
+      if (column.render) {
+        rowValue = column.render(value, data);
+      }
 
-          row.push(exposedValue);
-        }
-      });
+      row.push(rowValue);
     });
 
     rows.push(row);
