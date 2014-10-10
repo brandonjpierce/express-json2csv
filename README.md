@@ -1,6 +1,6 @@
 # express-json2csv
 
-## PLEASE NOTE THAT THIS IS A WORK IN PROGRESS MODULE. EXPECT SYNTAX CHANGES FREQUENTLY WHILE I WORK THROUGH EDGE CASES AND REAL WORLD USES.
+#### PLEASE NOTE THAT THIS IS A WORK IN PROGRESS MODULE. EXPECT SYNTAX CHANGES FREQUENTLY WHILE I WORK THROUGH EDGE CASES AND REAL WORLD USES.
 
 This is currently being tested in an application that has to create 500,000+ row csv files.
 
@@ -26,16 +26,16 @@ app.use(json2csv);
 res.csv(filename, data, columns, [options]);
 ```
 
-### Filename
+#### Filename
 This can be any string you wish. The `.csv` extension is automatically appended to the filename so it is not required.
 
-### Data
+#### Data
 ```js
 Type: Array
 ```
 Data is a required argument. The columns prop property will reference the keys in each of the data objects you pass in to define the order.
 
-### Columns
+#### Columns
 ```js
 Type: Array
 ```
@@ -54,7 +54,7 @@ var columns = [{
 }];
 ```
 
-### Options
+#### Options
 
 Option | Type | Default | Description
 ------ | ---- | ------- | -----------
