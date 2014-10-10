@@ -1,6 +1,6 @@
 {
   "name": "express-json2csv",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Express middleware to convert JSON to a CSV file",
   "main": "index.js",
   "directories": {
